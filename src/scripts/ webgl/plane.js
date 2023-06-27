@@ -23,7 +23,7 @@ export class Plane extends WebglBase {
 
   _loadModel() {
     const loader = new GLTFLoader();
-    const url = "/public/koil.gltf";
+    const url = "/koil.gltf";
 
     loader.load(
       url,
