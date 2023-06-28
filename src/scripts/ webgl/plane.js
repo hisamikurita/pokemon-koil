@@ -15,6 +15,9 @@ import GUI from "lil-gui";
 export class Plane extends WebglBase {
   constructor(canvas) {
     super(canvas);
+
+    this.modelNum = 100;
+    this.models = [];
   }
 
   async init() {
@@ -29,9 +32,17 @@ export class Plane extends WebglBase {
       url,
       (gltf) => {
         // オブジェクトの読み込みが完了したタイミングで実行
-        this.scene.add(gltf.scene);
+        for (let i = 0; i < this.modelNum; i++) {
+          const clone = gltf.scene.clone();
+          this.models.push(clone);
+        }
 
-        console.log(gltf);
+        for (let i = 0; i < this.models.length; i++) {
+          this.scene.add(this.models[i]);
+
+          this.models[i].position.x = Math.random() * 50 - 25;
+          this.models[i].position.y = Math.random() * 50 - 25;
+        }
       },
       (xhr) => {
         // オブジェクトを読み込んでいるタイミングで実行
