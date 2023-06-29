@@ -16,7 +16,12 @@ export class Plane extends WebglBase {
   constructor(canvas) {
     super(canvas);
 
-    this.modelNum = 100;
+    this.scale = 50;
+    this.range = {
+      x: window.innerWidth,
+      y: window.innerHeight,
+    };
+    this.modelsNum = 20;
     this.models = [];
   }
 
@@ -32,7 +37,7 @@ export class Plane extends WebglBase {
       url,
       (gltf) => {
         // オブジェクトの読み込みが完了したタイミングで実行
-        for (let i = 0; i < this.modelNum; i++) {
+        for (let i = 0; i < this.modelsNum; i++) {
           const clone = gltf.scene.clone();
           this.models.push(clone);
         }
@@ -40,8 +45,12 @@ export class Plane extends WebglBase {
         for (let i = 0; i < this.models.length; i++) {
           this.scene.add(this.models[i]);
 
-          this.models[i].position.x = Math.random() * 50 - 25;
-          this.models[i].position.y = Math.random() * 50 - 25;
+          this.models[i].scale.set(this.scale, this.scale, this.scale);
+
+          this.models[i].position.x =
+            Math.random() * this.range.x - this.range.x / 2;
+          this.models[i].position.y =
+            Math.random() * this.range.y - this.range.y / 2;
         }
       },
       (xhr) => {
