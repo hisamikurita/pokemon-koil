@@ -1,17 +1,4 @@
-import {
-  Scene,
-  PerspectiveCamera,
-  WebGLRenderer,
-  Vector3,
-  MathUtils,
-  AmbientLight,
-  DirectionalLight,
-  PointLight,
-  Color,
-  GridHelper,
-  AxesHelper,
-  ACESFilmicToneMapping,
-} from "three";
+import { Scene, PerspectiveCamera, WebGLRenderer, Vector3, AmbientLight, DirectionalLight, Color, GridHelper, AxesHelper, ACESFilmicToneMapping } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 export class WebglBase {
@@ -21,6 +8,10 @@ export class WebglBase {
       alpha: false,
       width: window.innerWidth,
       height: window.innerHeight,
+      color: 0xade2d1,
+      antialias: true,
+      exposure: 2.5,
+      useLegacyLights: false,
     };
     this.cameraParam = {
       fov: 60,
@@ -32,7 +23,6 @@ export class WebglBase {
       z: 1,
     };
 
-    this.clearColor = 0xade2d1;
     this.dpr = 2.0;
     this.scene = null;
     this.camera = null;
@@ -40,6 +30,8 @@ export class WebglBase {
     this.isInitialized = false;
     this.renderTarget = null;
     this.orbitcontrols = null;
+    this.ambientLight = null;
+    this.directionalLight = null;
 
     this._baseSetUp();
   }
@@ -48,26 +40,10 @@ export class WebglBase {
     this._baseSetScene();
     this._baseSetRender();
     this._baseSetCamera();
+    this._baseSetLight();
 
-    this.orbitcontrols = new OrbitControls(
-      this.camera,
-      this.renderer.domElement
-    );
-    this.orbitcontrols.enableDamping = true;
-    // this.orbitcontrols.autoRotate = true;
-
-    const ambientLight = new AmbientLight(0xffffff, 5.0);
-    this.scene.add(ambientLight);
-
-    const directionalLight = new DirectionalLight(0xffffff, 2.5);
-    this.scene.add(directionalLight);
-
-    // const pointLight = new PointLight(0xffffff, 100, 1000);
-    // pointLight.position.set(50, 50, 50);
-    // this.scene.add(pointLight);
-
-    this.scene.add(new GridHelper(5000, 100));
-    this.scene.add(new AxesHelper(500));
+    // this.scene.add(new GridHelper(5000, 100));
+    // this.scene.add(new AxesHelper(500));
   }
 
   _baseSetScene() {
@@ -78,14 +54,14 @@ export class WebglBase {
     this.renderer = new WebGLRenderer({
       canvas: this.renderParam.canvas,
       alpha: this.renderParam.alpha,
-      antialias: true,
+      antialias: this.renderParam.antialias,
     });
     this.renderer.setPixelRatio(this.dpr);
-    this.renderer.setClearColor(new Color(this.clearColor));
+    this.renderer.setClearColor(new Color(this.renderParam.color));
     this.renderer.setSize(this.renderParam.width, this.renderParam.height);
     this.renderer.toneMapping = ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 2.5;
-    this.renderer.useLegacyLights = false;
+    this.renderer.toneMappingExposure = this.renderParam.exposure;
+    this.renderer.useLegacyLights = this.renderParam.useLegacyLights;
   }
 
   _baseSetCamera() {
@@ -93,19 +69,14 @@ export class WebglBase {
     const height = window.innerHeight;
 
     if (!this.isInitialized) {
-      this.camera = new PerspectiveCamera(
-        this.cameraParam.fov,
-        width / height,
-        this.cameraParam.near,
-        this.cameraParam.far
-      );
+      this.camera = new PerspectiveCamera(this.cameraParam.fov, width / height, this.cameraParam.near, this.cameraParam.far);
 
-      this.camera.position.set(
-        this.cameraParam.x,
-        this.cameraParam.y,
-        this.cameraParam.z
-      );
+      this.camera.position.set(this.cameraParam.x, this.cameraParam.y, this.cameraParam.z);
       this.camera.lookAt(this.cameraParam.lookAt);
+
+      this.orbitcontrols = new OrbitControls(this.camera, this.renderer.domElement);
+      this.orbitcontrols.enableDamping = true;
+
       this.isInitialized = true;
     }
     const fovRad = (this.cameraParam.fov / 2) * (Math.PI / 180);
@@ -114,6 +85,14 @@ export class WebglBase {
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, height);
+  }
+
+  _baseSetLight() {
+    this.ambientLight = new AmbientLight(0xffffff, 5.0);
+    this.scene.add(this.ambientLight);
+
+    this.directionalLight = new DirectionalLight(0xffffff, 2.5);
+    this.scene.add(this.directionalLight);
   }
 
   onResize() {
