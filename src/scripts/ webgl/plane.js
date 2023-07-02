@@ -1,12 +1,13 @@
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { WebglBase } from "./webgl-base";
+import { isSp } from "../variables";
 
 export class Plane extends WebglBase {
   constructor(canvas) {
     super(canvas);
 
     this.rotateBase = 0.0012;
-    this.scaleBase = 40;
+    this.scaleBase = isSp ? 20 : 40;
     this.buffer = 500;
     this.positionRange = {
       x: window.innerWidth,
@@ -74,7 +75,7 @@ export class Plane extends WebglBase {
       this.models[i].rotation.z = rotate.z;
 
       model.userData = {
-        speed: Math.random() + 1.0,
+        speed: isSp ? Math.random() + 0.5 : Math.random() + 1.0,
         rotate,
       };
     }
