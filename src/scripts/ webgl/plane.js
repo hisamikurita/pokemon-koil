@@ -1,21 +1,19 @@
-import { CircleGeometry, PlaneGeometry, InstancedBufferGeometry, InstancedBufferAttribute, RawShaderMaterial, Mesh, DoubleSide, Color } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { WebglBase } from "./webgl-base";
-import GUI from "lil-gui";
 
 export class Plane extends WebglBase {
   constructor(canvas) {
     super(canvas);
 
-    this.speed = 1.0;
+    this.rotateBase = 0.0012;
     this.scaleBase = 40;
-    this.buffer = 300;
+    this.buffer = 500;
     this.positionRange = {
       x: window.innerWidth,
       y: window.innerHeight,
       z: 1000,
     };
-    this.modelsNum = 20;
+    this.modelsNum = 30;
     this.models = [];
   }
 
@@ -67,13 +65,13 @@ export class Plane extends WebglBase {
 
       this.models[i].scale.set(this.scaleBase * scaleRange, this.scaleBase * scaleRange, this.scaleBase * scaleRange);
 
-      this.models[i].position.x = Math.random() * this.positionRange.x - this.positionRange.x / 2;
-      this.models[i].position.y = Math.random() * this.positionRange.y - this.positionRange.y / 2;
+      this.models[i].position.x = (i / this.models.length) * window.innerWidth - window.innerWidth / 2;
+      this.models[i].position.y = Math.random() * (this.positionRange.y + this.buffer * 2) - (this.positionRange.y + this.buffer * 2) / 2;
       this.models[i].position.z = Math.random() * this.positionRange.z - this.positionRange.z / 2;
 
-      this.models[i].rotation.x = Math.random() * Math.PI * 2;
-      this.models[i].rotation.y = Math.random() * Math.PI * 2;
-      this.models[i].rotation.z = Math.random() * Math.PI * 2;
+      this.models[i].rotation.x = rotate.x;
+      this.models[i].rotation.y = rotate.y;
+      this.models[i].rotation.z = rotate.z;
 
       model.userData = {
         speed: Math.random() + 1.0,
@@ -95,9 +93,9 @@ export class Plane extends WebglBase {
     for (let i = 0; i < this.models.length; i++) {
       const model = this.models[i];
       model.position.y += model.userData.speed;
-      model.rotation.x += model.userData.rotate.x * 0.001;
-      model.rotation.y += model.userData.rotate.y * 0.001;
-      model.rotation.z += model.userData.rotate.z * 0.001;
+      model.rotation.x += model.userData.rotate.x * this.rotateBase;
+      model.rotation.y += model.userData.rotate.y * this.rotateBase;
+      model.rotation.z += model.userData.rotate.z * this.rotateBase;
 
       if (model.position.y > this.positionRange.y / 2 + this.buffer) {
         model.position.y = -this.positionRange.y / 2 - this.buffer;

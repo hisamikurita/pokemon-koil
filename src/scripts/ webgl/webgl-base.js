@@ -41,9 +41,6 @@ export class WebglBase {
     this._baseSetRender();
     this._baseSetCamera();
     this._baseSetLight();
-
-    // this.scene.add(new GridHelper(5000, 100));
-    // this.scene.add(new AxesHelper(500));
   }
 
   _baseSetScene() {
