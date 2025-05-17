@@ -22,4 +22,4 @@
 ```
 
 ## Reference
-<a href="[https://hisamikurita.github.io/pokemon-koil/](https://youtu.be/yRUAZXJLXts?si=oYo7OHpgyjDS2viH)">model</a>
+<a href="https://youtu.be/yRUAZXJLXts?si=oYo7OHpgyjDS2viH">3dmodel</a>
